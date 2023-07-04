@@ -1,18 +1,16 @@
-import 'package:calculator/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:math_expressions/math_expressions.dart';
+import "package:calculator/colors.dart";
+import "package:flutter/material.dart";
+import "package:math_expressions/math_expressions.dart";
 
 void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: CalculatorApp(),
-    ),
-  );
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: CalculatorApp(),
+  ));
 }
 
 class CalculatorApp extends StatefulWidget {
-  const CalculatorApp({Key? key}) : super(key: key);
+  const CalculatorApp({super.key});
 
   @override
   State<CalculatorApp> createState() => _CalculatorAppState();
@@ -22,43 +20,56 @@ class _CalculatorAppState extends State<CalculatorApp> {
   // variables
   double fisrtnum = 0.0;
   double secondnum = 0.0;
-  var input = '';
-  var output = '';
-  var operation = '';
+  var input = " ";
+  var output = " ";
+  var operation = " ";
 
+  // var hideInput = false;
   var hideOutput = false;
+
   var outputSize = 50.0;
 
   onButtonClick(value) {
     // if AC button is pressed
-    if (value == 'AC') {
-      input = '';
-      output = '';
-    } else if (value == 'DEL') {
+
+    if (value == "AC") {
+      input = " ";
+      output = " ";
+    } else if (value == "DEL") {
       if (input.isNotEmpty) {
-        input = input.substring(0, input.length - 1);
+        input = input.substring(
+            0,
+            input.length -
+                1); // similar to .pop() operation, removes the last charecter from string i.e we're reassigning the input to input without the last charecter
       }
-    } else if (value == '%') {
+    } else if (value == "%") {
       input = (double.parse(input) / 100).toString();
-    } else if (value == '=') {
+    } else if (value == "=") {
       if (input.isNotEmpty) {
         var userInput = input;
         userInput = input
-            .replaceAll('×', '*')
-            .replaceAll('–', '-')
-            .replaceAll('÷', '/');
+            .replaceAll("×", "*")
+            .replaceAll("–", "-")
+            .replaceAll("÷", "/");
 
         Parser p = Parser();
+        // ignore: unused_local_variable
         Expression expression = p.parse(userInput);
         ContextModel cm = ContextModel();
         var finalValue = expression.evaluate(EvaluationType.REAL, cm);
         output = finalValue.toString();
-        if (output.endsWith('.0')) {
+        if (output.endsWith(".0")) {
           output = output.substring(0, output.length - 2);
         }
+        // input = output;
+        
+        // hideInput = true;
+        // outputSize = 48;
       }
     } else {
       input = input + value;
+      // hideInput = false;
+      // outputSize = 34;
     }
 
     setState(() {});
@@ -66,221 +77,111 @@ class _CalculatorAppState extends State<CalculatorApp> {
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
-    final calculatorWidth = MediaQuery.of(context).size.width * 0.3;
-    final buttonWidth = (calculatorWidth - 16 * 5) / 4;
-    final buttonHeight = buttonWidth;
-
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: Container(
-          height: screenHeight,
-          width: calculatorWidth,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Display area
-              Container(
-                width: calculatorWidth,
+      body: Column(
+        children: [
+          // ipop area
+          Expanded(
+            child: Container(
+                width: double.infinity,
                 padding: const EdgeInsets.all(12),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      input,
-                      style: TextStyle(
-                        fontSize: 60,
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        input,
+                        style: TextStyle(
+                          fontSize: 60,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 10),
-                    Text(
-                      hideOutput ? ' ' : output,
-                      style: TextStyle(
-                        fontSize: outputSize,
-                        color: Colors.white.withOpacity(0.7),
-                        fontWeight: FontWeight.bold,
+                      SizedBox(
+                        height: 10,
                       ),
-                    ),
-                    SizedBox(height: 100),
-                  ],
-                ),
-              ),
+                      Text(
+                        hideOutput ? " " : output,
+                        style: TextStyle(
+                          fontSize: outputSize,
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 100,
+                      )
+                    ])),
+          ),
 
-              // Buttons
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      button(
-                        text: 'AC',
-                        buttonBG: operatorColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: 'DEL',
-                        buttonBG: operatorColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '+/-',
-                        buttonBG: operatorColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '÷',
-                        buttonBG: operatorColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      button(
-                        text: '7',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '8',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '9',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '×',
-                        buttonBG: operatorColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      button(
-                        text: '4',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '5',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '6',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '–',
-                        buttonBG: operatorColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      button(
-                        text: '1',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '2',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '3',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '+',
-                        buttonBG: operatorColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      button(
-                        text: '%',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '0',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '.',
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                      button(
-                        text: '=',
-                        buttonBG: orangeColor,
-                        width: buttonWidth,
-                        height: buttonHeight,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+          // buttons
+          Row(
+            children: [
+              button(text: "AC", buttonBG: operatorColor, tColor: orangeColor),
+              button(text: "DEL", buttonBG: operatorColor),
+              button(text: "+/–", buttonBG: operatorColor),
+              button(text: "÷", buttonBG: operatorColor)
             ],
           ),
-        ),
+
+          Row(
+            children: [
+              button(text: "7"),
+              button(text: "8"),
+              button(text: "9"),
+              button(text: "×", buttonBG: operatorColor)
+            ],
+          ),
+
+          Row(
+            children: [
+              button(text: "4"),
+              button(text: "5"),
+              button(text: "6"),
+              button(text: "–", buttonBG: operatorColor)
+            ],
+          ),
+
+          Row(
+            children: [
+              button(text: "1"),
+              button(text: "2"),
+              button(text: "3"),
+              button(text: "+", buttonBG: operatorColor)
+            ],
+          ),
+
+          Row(
+            children: [
+              button(text: "%"),
+              button(text: "0"),
+              button(text: "."),
+              button(text: "=", buttonBG: orangeColor)
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget button({
-    required String text,
-    Color buttonBG = buttonColor,
-    required double width,
-    required double height,
-  }) {
+  Widget button({text, tColor = Colors.white, buttonBG = buttonColor}) {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.all(8),
-        child: ElevatedButton(
+        child: Container(
+      margin: EdgeInsets.all(8),
+      child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: EdgeInsets.all(22),
-            backgroundColor: buttonBG,
-          ),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              padding: EdgeInsets.all(22),
+              backgroundColor: buttonBG),
           onPressed: () => onButtonClick(text),
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
+          child: Text(text,
+              style: TextStyle(
+                fontSize: 18,
+                color: tColor,
+                fontWeight: FontWeight.bold,
+              ))),
+    ));
   }
 }
